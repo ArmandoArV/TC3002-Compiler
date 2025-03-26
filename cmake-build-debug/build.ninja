@@ -55,17 +55,17 @@ build CMakeFiles/TC3002_Compiler.dir/main.cpp.obj: CXX_COMPILER__TC3002_Compiler
   OBJECT_DIR = CMakeFiles\TC3002_Compiler.dir
   OBJECT_FILE_DIR = CMakeFiles\TC3002_Compiler.dir
 
-build CMakeFiles/TC3002_Compiler.dir/Util/Lexer.cpp.obj: CXX_COMPILER__TC3002_Compiler_unscanned_Debug F$:/TC3002-Compiler/Util/Lexer.cpp || cmake_object_order_depends_target_TC3002_Compiler
-  DEP_FILE = CMakeFiles\TC3002_Compiler.dir\Util\Lexer.cpp.obj.d
+build CMakeFiles/TC3002_Compiler.dir/Util/Lexer/Lexer.cpp.obj: CXX_COMPILER__TC3002_Compiler_unscanned_Debug F$:/TC3002-Compiler/Util/Lexer/Lexer.cpp || cmake_object_order_depends_target_TC3002_Compiler
+  DEP_FILE = CMakeFiles\TC3002_Compiler.dir\Util\Lexer\Lexer.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\TC3002_Compiler.dir
-  OBJECT_FILE_DIR = CMakeFiles\TC3002_Compiler.dir\Util
+  OBJECT_FILE_DIR = CMakeFiles\TC3002_Compiler.dir\Util\Lexer
 
-build CMakeFiles/TC3002_Compiler.dir/TokenKind/TokenKind.cpp.obj: CXX_COMPILER__TC3002_Compiler_unscanned_Debug F$:/TC3002-Compiler/TokenKind/TokenKind.cpp || cmake_object_order_depends_target_TC3002_Compiler
-  DEP_FILE = CMakeFiles\TC3002_Compiler.dir\TokenKind\TokenKind.cpp.obj.d
+build CMakeFiles/TC3002_Compiler.dir/Util/FileUtils/FileUtils.cpp.obj: CXX_COMPILER__TC3002_Compiler_unscanned_Debug F$:/TC3002-Compiler/Util/FileUtils/FileUtils.cpp || cmake_object_order_depends_target_TC3002_Compiler
+  DEP_FILE = CMakeFiles\TC3002_Compiler.dir\Util\FileUtils\FileUtils.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\TC3002_Compiler.dir
-  OBJECT_FILE_DIR = CMakeFiles\TC3002_Compiler.dir\TokenKind
+  OBJECT_FILE_DIR = CMakeFiles\TC3002_Compiler.dir\Util\FileUtils
 
 
 # =============================================================================
@@ -75,7 +75,7 @@ build CMakeFiles/TC3002_Compiler.dir/TokenKind/TokenKind.cpp.obj: CXX_COMPILER__
 #############################################
 # Link the executable TC3002_Compiler.exe
 
-build TC3002_Compiler.exe: CXX_EXECUTABLE_LINKER__TC3002_Compiler_Debug CMakeFiles/TC3002_Compiler.dir/main.cpp.obj CMakeFiles/TC3002_Compiler.dir/Util/Lexer.cpp.obj CMakeFiles/TC3002_Compiler.dir/TokenKind/TokenKind.cpp.obj
+build TC3002_Compiler.exe: CXX_EXECUTABLE_LINKER__TC3002_Compiler_Debug CMakeFiles/TC3002_Compiler.dir/main.cpp.obj CMakeFiles/TC3002_Compiler.dir/Util/Lexer/Lexer.cpp.obj CMakeFiles/TC3002_Compiler.dir/Util/FileUtils/FileUtils.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\TC3002_Compiler.dir
