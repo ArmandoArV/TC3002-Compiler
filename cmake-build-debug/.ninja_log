@@ -1,0 +1,7 @@
+# ninja log v5
+1	646	7646487771518358	CMakeFiles/TC3002_Compiler.dir/main.cpp.obj	e153eb18c9e7768
+648	1037	7646487775405239	TC3002_Compiler.exe	a701d32e107cefcb
+14	101	7646502505195921	CMakeFiles/TC3002_Compiler.dir/Util/Lexer.cpp.obj	e19159f735fade1e
+7	1005	7646502514230049	CMakeFiles/TC3002_Compiler.dir/main.cpp.obj	e153eb18c9e7768
+19	2126	7646502525282279	CMakeFiles/TC3002_Compiler.dir/TokenKind/TokenKind.cpp.obj	ea7feb764cea11ba
+2127	2748	7646502531603440	TC3002_Compiler.exe	6d3b7c2ec4e1bbc5
