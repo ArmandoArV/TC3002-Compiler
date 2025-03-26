@@ -2,13 +2,14 @@
 #include <cctype>
 #include <unordered_map>
 #include <stdexcept>
+#include <iostream>
 
-const std::unordered_set<std::string> Lexer::keywords = {
+const unordered_set<string> Lexer::keywords = {
     "and", "break", "dec", "elif", "else", "false", "if", "inc",
     "loop", "not", "or", "return", "true", "var"
 };
 
-Lexer::Lexer(const std::string& source) : source(source) {}
+Lexer::Lexer(const string& source) : source(source) {}
 
 char Lexer::currentChar() const {
     return position < source.length() ? source[position] : '\0';
@@ -35,27 +36,10 @@ void Lexer::skipWhitespace() {
     }
 }
 
-void Lexer::skipLineComment() {
-    while (position < source.length() && currentChar() != '\n') {
-        advance();
-    }
-}
-
-void Lexer::skipBlockComment() {
-    while (position < source.length()) {
-        if (currentChar() == '*' && peekChar() == '/') {
-            advance(); advance();
-            return;
-        }
-        advance();
-    }
-    throw std::runtime_error("Unterminated block comment");
-}
-
 Token Lexer::readNumber() {
     size_t startLine = line;
     size_t startColumn = column;
-    std::string numStr;
+    string numStr;
 
     if (currentChar() == '-') {
         numStr += '-';
@@ -73,26 +57,26 @@ Token Lexer::readNumber() {
 Token Lexer::readIdentifier() {
     size_t startLine = line;
     size_t startColumn = column;
-    std::string ident;
+    string ident;
 
     while (isalnum(currentChar()) || currentChar() == '_') {
         ident += currentChar();
         advance();
     }
 
-    if (keywords.count(ident)) {
-        if (ident == "true" || ident == "false") {
-            return {TokenKind::LIT_BOOL, ident, startLine, startColumn};
-        }
-        return {TokenKindFromString(ident), ident, startLine, startColumn};
+   if (keywords.count(ident)) {
+    if (ident == "true" || ident == "false") {  // exact lowercase match
+        return {TokenKind::LIT_BOOL, ident, startLine, startColumn};
     }
+    return {TokenKindFromString(ident), ident, startLine, startColumn};
+}
     return {TokenKind::IDENTIFIER, ident, startLine, startColumn};
 }
 
 Token Lexer::readString() {
     size_t startLine = line;
     size_t startColumn = column;
-    std::string str;
+    string str;
     advance(); // Skip opening quote
 
     while (currentChar() != '"' && currentChar() != '\n') {
@@ -119,7 +103,7 @@ Token Lexer::readString() {
     }
 
     if (currentChar() != '"') {
-        throw std::runtime_error("Unterminated string literal");
+        throw runtime_error("Unterminated string literal");
     }
     advance(); // Skip closing quote
 
@@ -129,7 +113,7 @@ Token Lexer::readString() {
 Token Lexer::readChar() {
     size_t startLine = line;
     size_t startColumn = column;
-    std::string ch;
+    string ch;
     advance(); // Skip opening quote
 
     if (currentChar() == '\\') {
@@ -151,22 +135,69 @@ Token Lexer::readChar() {
         advance();
     } else {
         if (currentChar() == '\'') {
-            throw std::runtime_error("Empty character literal");
+            throw runtime_error("Empty character literal");
         }
         ch = currentChar();
         advance();
     }
 
     if (currentChar() != '\'') {
-        throw std::runtime_error("Unterminated character literal");
+        throw runtime_error("Unterminated character literal");
     }
     advance(); // Skip closing quote
 
     return {TokenKind::LIT_CHAR, ch, startLine, startColumn};
 }
 
-TokenKind Lexer::TokenKindFromString(const std::string& str) {
-    static const std::unordered_map<std::string, TokenKind> keywordMap = {
+Token Lexer::readLineComment() {
+    size_t startLine = line;
+    size_t startColumn = column;
+    string comment;
+    advance(); advance(); // Skip initial //
+
+    while (currentChar() != '\n' && currentChar() != '\0') {
+        comment += currentChar();
+        advance();
+    }
+
+    // // cout << "Detected LINE_COMMENT: " << comment << endl;
+    return {TokenKind::LINE_COMMENT, comment, startLine, startColumn};
+}
+
+Token Lexer::readBlockComment() {
+    size_t startLine = line;
+    size_t startColumn = column;
+    string comment;
+
+    // Skip the initial /*
+    advance();
+    advance();
+
+    // cout << "Reading block comment starting at line " << startLine << endl;
+
+    // Read until */ or EOF
+    while (position < source.length()) {
+        if (currentChar() == '*' && peekChar() == '/') {
+            advance();
+            advance(); // Skip */
+            // cout << "Block comment ended: " << comment << endl;
+            return {TokenKind::BLOCK_COMMENT, comment, startLine, startColumn};
+        }
+        if (currentChar() == '\n') {
+            line++;
+            column = 1;
+        }
+        comment += currentChar();
+        advance();
+    }
+
+    // cout << "ERROR: Unterminated block comment!" << endl;
+    throw runtime_error("Unterminated block comment");
+}
+
+
+TokenKind Lexer::TokenKindFromString(const string& str) {
+    static const unordered_map<string, TokenKind> keywordMap = {
         {"and", TokenKind::AND}, {"break", TokenKind::BREAK},
         {"dec", TokenKind::DEC}, {"elif", TokenKind::ELIF},
         {"else", TokenKind::ELSE}, {"false", TokenKind::FALSE},
@@ -179,7 +210,7 @@ TokenKind Lexer::TokenKindFromString(const std::string& str) {
     return it != keywordMap.end() ? it->second : TokenKind::IDENTIFIER;
 }
 
-std::vector<Token> Lexer::tokenize() {
+vector<Token> Lexer::tokenize() {
     while (position < source.length()) {
         char c = currentChar();
 
@@ -188,15 +219,16 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
+        // Handle // comments
         if (c == '/' && peekChar() == '/') {
-            advance(); advance();
-            skipLineComment();
+            tokens.push_back(readLineComment());
             continue;
         }
 
+        // Handle /* comments
         if (c == '/' && peekChar() == '*') {
-            advance(); advance();
-            skipBlockComment();
+            // cout << "Block comment detected at " << line << ":" << column << endl;
+            tokens.push_back(readBlockComment());
             continue;
         }
 
@@ -271,6 +303,13 @@ std::vector<Token> Lexer::tokenize() {
                 tokens.push_back({TokenKind::ASTERISK, "*", line, column-1});
                 continue;
             case '/':
+                if (peekChar() == '/') {
+                    tokens.push_back(readLineComment());
+                    continue;
+                } else if (peekChar() == '*') {
+                    tokens.push_back(readBlockComment());
+                    continue;
+                }
                 advance();
                 tokens.push_back({TokenKind::SLASH, "/", line, column-1});
                 continue;
@@ -316,7 +355,7 @@ std::vector<Token> Lexer::tokenize() {
                 continue;
             default:
                 advance();
-                tokens.push_back({TokenKind::UNKNOWN, std::string(1, c), line, column-1});
+                tokens.push_back({TokenKind::UNKNOWN, string(1, c), line, column-1});
         }
     }
 
@@ -325,7 +364,7 @@ std::vector<Token> Lexer::tokenize() {
 }
 
 string Lexer::tokenKindToString(TokenKind kind) {
-    static const std::unordered_map<TokenKind, std::string> kindMap = {
+    static const unordered_map<TokenKind, string> kindMap = {
         // Keywords
         {TokenKind::AND, "AND"}, {TokenKind::BREAK, "BREAK"},
         {TokenKind::DEC, "DEC"}, {TokenKind::ELIF, "ELIF"},
@@ -357,6 +396,9 @@ string Lexer::tokenKindToString(TokenKind kind) {
         {TokenKind::COMMA, "COMMA"}, {TokenKind::SEMICOLON, "SEMICOLON"},
         {TokenKind::COLON, "COLON"},
 
+        // Comments
+        {TokenKind::BLOCK_COMMENT, "BLOCK_COMMENT"}, {TokenKind::LINE_COMMENT, "LINE_COMMENT"},
+        
         // Special
         {TokenKind::END_OF_FILE, "END_OF_FILE"}, {TokenKind::UNKNOWN, "UNKNOWN"}
     };
@@ -364,3 +406,22 @@ string Lexer::tokenKindToString(TokenKind kind) {
     auto it = kindMap.find(kind);
     return it != kindMap.end() ? it->second : "UNKNOWN_TOKEN";
 }
+
+/*
+ void Lexer::skipLineComment() {
+    while (position < source.length() && currentChar() != '\n') {
+        advance();
+    }
+}
+
+void Lexer::skipBlockComment() {
+    while (position < source.length()) {
+        if (currentChar() == '*' && peekChar() == '/') {
+            advance(); advance();
+            return;
+        }
+        advance();
+    }
+    throw runtime_error("Unterminated block comment");
+}
+ */

@@ -22,6 +22,8 @@ private:
     void skipWhitespace();
     void skipLineComment();
     void skipBlockComment();
+    Token readLineComment();
+    Token readBlockComment();
     Token readNumber();
     Token readIdentifier();
     Token readString();

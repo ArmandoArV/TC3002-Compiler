@@ -4,6 +4,6 @@
 */
 
 main() {
-    prints("hello, world\n");;;
+    prints("hello, world\n");;; // Test comment
     return 42;;;
 }
