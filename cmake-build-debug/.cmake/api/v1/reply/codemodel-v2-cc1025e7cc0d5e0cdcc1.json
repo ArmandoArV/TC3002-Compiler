@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "D:/TC3002-Compiler/cmake-build-debug",
-		"source" : "D:/TC3002-Compiler"
+		"build" : "F:/TC3002-Compiler/cmake-build-debug",
+		"source" : "F:/TC3002-Compiler"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 6
+		"minor" : 5
 	}
 }

@@ -36,8 +36,17 @@ void Lexer::advance() {
 }
 
 void Lexer::skipWhitespace() {
-    while (position < source.length() && isspace(currentChar())) {
-        advance();
+    while (position < source.length()) {
+        char c = currentChar();
+        if (c == '\n') {
+            line++;
+            column = 1;
+            position++;
+        } else if (isspace(c)) {
+            advance();
+        } else {
+            break;
+        }
     }
 }
 
@@ -174,32 +183,20 @@ Token Lexer::readBlockComment() {
     size_t startColumn = column;
     string comment;
 
-    // Skip the initial /*
-    advance();
-    advance();
+    // Skip /*
+    advance(); advance();
 
-    // cout << "Reading block comment starting at line " << startLine << endl;
-
-    // Read until */ or EOF
     while (position < source.length()) {
         if (currentChar() == '*' && peekChar() == '/') {
-            advance();
-            advance(); // Skip */
-            // cout << "Block comment ended: " << comment << endl;
+            advance(); advance();
+            // Return with original starting line
             return {TokenKind::BLOCK_COMMENT, comment, startLine, startColumn};
-        }
-        if (currentChar() == '\n') {
-            line++;
-            column = 1;
         }
         comment += currentChar();
         advance();
     }
-
-    // cout << "ERROR: Unterminated block comment!" << endl;
     throw runtime_error("Unterminated block comment");
 }
-
 
 TokenKind Lexer::TokenKindFromString(const string& str) {
     static const unordered_map<string, TokenKind> keywordMap = {
