@@ -1,8 +1,0 @@
-# ninja log v5
-9	1636	7651379341307842	CMakeFiles/TC3002_Compiler.dir/Util/FileUtils/FileUtils.cpp.obj	25f16aa3178fdd18
-1	1641	7651379341378741	CMakeFiles/TC3002_Compiler.dir/main.cpp.obj	e153eb18c9e7768
-1541	1781	7651538757845451	TC3002_Compiler.exe	fc9e7d487f781c53
-4	1538	7651538755436754	CMakeFiles/TC3002_Compiler.dir/Util/Lexer/Lexer.cpp.obj	8adbd48ca79b3b2a
-9	1049	7651555200480444	CMakeFiles/TC3002_Compiler.dir/Util/Parser/Parser.cpp.obj	f1957b2d64864cca
-3	1067	7651555200655900	CMakeFiles/TC3002_Compiler.dir/main.cpp.obj	e153eb18c9e7768
-1067	1796	7651555207917776	TC3002_Compiler.exe	ba66dd5e5b141f16

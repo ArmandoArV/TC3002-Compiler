@@ -1,3 +1,0 @@
-F:/TC3002-Compiler/cmake-build-debug/CMakeFiles/TC3002_Compiler.dir
-F:/TC3002-Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
-F:/TC3002-Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir

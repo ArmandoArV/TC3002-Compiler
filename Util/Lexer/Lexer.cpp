@@ -16,6 +16,12 @@ const unordered_set<string> Lexer::keywords = {
 
 Lexer::Lexer(const string& source) : source(source) {}
 
+bool isSpecialChar(char c) {
+    // Check for non-ASCII characters
+    return static_cast<unsigned char>(c) > 127;
+}
+
+
 char Lexer::currentChar() const {
     return position < source.length() ? source[position] : '\0';
 }
@@ -33,6 +39,10 @@ void Lexer::advance() {
         column++;
     }
     position++;
+}
+
+bool isLatinLetter(char c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 void Lexer::skipWhitespace() {
@@ -73,17 +83,28 @@ Token Lexer::readIdentifier() {
     size_t startColumn = column;
     string ident;
 
-    while (isalnum(currentChar()) || currentChar() == '_') {
+    // First character must be a letter or underscore
+    if (isLatinLetter(currentChar()) || currentChar() == '_') {
+        ident += currentChar();
+        advance();
+    } else {
+        // Handle as unknown character
+        return {TokenKind::UNKNOWN, string(1, currentChar()), startLine, startColumn};
+    }
+
+    // Subsequent characters can be letters, digits or underscores
+    while (isLatinLetter(currentChar()) || isdigit(currentChar()) || currentChar() == '_') {
         ident += currentChar();
         advance();
     }
 
-   if (keywords.count(ident)) {
-    if (ident == "true" || ident == "false") {  // exact lowercase match
-        return {TokenKind::LIT_BOOL, ident, startLine, startColumn};
+    // Check if it's a keyword
+    if (keywords.count(ident)) {
+        if (ident == "true" || ident == "false") {
+            return {TokenKind::LIT_BOOL, ident, startLine, startColumn};
+        }
+        return {TokenKindFromString(ident), ident, startLine, startColumn};
     }
-    return {TokenKindFromString(ident), ident, startLine, startColumn};
-}
     return {TokenKind::IDENTIFIER, ident, startLine, startColumn};
 }
 
@@ -110,6 +131,12 @@ Token Lexer::readString() {
                     str += '\\';
                     str += currentChar();
             }
+        } else if (isSpecialChar(currentChar())) {
+            // Mark special characters in strings as unknown
+            str += currentChar();
+            tokens.push_back({TokenKind::UNKNOWN, string(1, currentChar()), line, column});
+            advance();
+            continue;
         } else {
             str += currentChar();
         }
@@ -153,6 +180,21 @@ Token Lexer::readChar() {
         }
         ch = currentChar();
         advance();
+    }
+
+     if (currentChar() == '\'') {
+        throw runtime_error("Empty character literal");
+    }
+
+    // Detect special characters
+    if (static_cast<unsigned char>(currentChar()) > 127) {
+        ch = currentChar();
+        advance();
+        if (currentChar() != '\'') {
+            throw runtime_error("Unterminated character literal");
+        }
+        advance();
+        return {TokenKind::UNKNOWN, ch, startLine, startColumn};
     }
 
     if (currentChar() != '\'') {
@@ -234,6 +276,12 @@ vector<Token> Lexer::tokenize() {
 
         if (isspace(c)) {
             skipWhitespace();
+            continue;
+        }
+
+         if (static_cast<unsigned char>(c) > 127) {
+            tokens.push_back({TokenKind::UNKNOWN, string(1, c), line, column});
+            advance();
             continue;
         }
 
