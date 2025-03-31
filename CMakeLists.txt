@@ -10,4 +10,6 @@ add_executable(TC3002_Compiler main.cpp
         Util/Lexer/Lexer.h
         Util/FileUtils/FileUtils.cpp
         Util/FileUtils/FileUtils.h
+        Util/Parser/Parser.cpp
+        Util/Parser/Parser.h
 )
