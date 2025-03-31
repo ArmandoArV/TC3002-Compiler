@@ -6,7 +6,12 @@
 
 const unordered_set<string> Lexer::keywords = {
     "and", "break", "dec", "elif", "else", "false", "if", "inc",
-    "loop", "not", "or", "return", "true", "var"
+    "loop", "not", "or", "return", "true", "var",
+    // API Functions
+    "printi", "printc", "prints", "println",
+    "readi", "reads",
+    "new", "size", "add", "get", "set",
+    "main"
 };
 
 Lexer::Lexer(const string& source) : source(source) {}
@@ -204,7 +209,23 @@ TokenKind Lexer::TokenKindFromString(const string& str) {
         {"if", TokenKind::IF}, {"inc", TokenKind::INC},
         {"loop", TokenKind::LOOP}, {"not", TokenKind::NOT},
         {"or", TokenKind::OR}, {"return", TokenKind::RETURN},
-        {"true", TokenKind::TRUE}, {"var", TokenKind::VAR}
+        {"true", TokenKind::TRUE}, {"var", TokenKind::VAR},
+         // API Functions
+        {"printi", TokenKind::PRINTI},
+        {"printc", TokenKind::PRINTC},
+        {"prints", TokenKind::PRINTS},
+        {"println", TokenKind::PRINTLN},
+        {"readi", TokenKind::READI},
+        {"reads", TokenKind::READS},
+        {"new", TokenKind::NEW},
+        {"size", TokenKind::SIZE},
+        {"add", TokenKind::ADD},
+        {"get", TokenKind::GET},
+        {"set", TokenKind::SET},
+        {"main", TokenKind::MAIN},
+         // Boolean literals
+        {"true", TokenKind::LIT_BOOL},
+        {"false", TokenKind::LIT_BOOL}
     };
     auto it = keywordMap.find(str);
     return it != keywordMap.end() ? it->second : TokenKind::IDENTIFIER;
@@ -400,7 +421,21 @@ string Lexer::tokenKindToString(TokenKind kind) {
         {TokenKind::BLOCK_COMMENT, "BLOCK_COMMENT"}, {TokenKind::LINE_COMMENT, "LINE_COMMENT"},
         
         // Special
-        {TokenKind::END_OF_FILE, "END_OF_FILE"}, {TokenKind::UNKNOWN, "UNKNOWN"}
+        {TokenKind::END_OF_FILE, "END_OF_FILE"}, {TokenKind::UNKNOWN, "UNKNOWN"},
+
+        // API Functions
+        {TokenKind::PRINTI, "PRINTI"},
+        {TokenKind::PRINTC, "PRINTC"},
+        {TokenKind::PRINTS, "PRINTS"},
+        {TokenKind::PRINTLN, "PRINTLN"},
+        {TokenKind::READI, "READI"},
+        {TokenKind::READS, "READS"},
+        {TokenKind::NEW, "NEW"},
+        {TokenKind::SIZE, "SIZE"},
+        {TokenKind::ADD, "ADD"},
+        {TokenKind::GET, "GET"},
+        {TokenKind::SET, "SET"},
+        {TokenKind::MAIN, "MAIN"}
     };
 
     auto it = kindMap.find(kind);

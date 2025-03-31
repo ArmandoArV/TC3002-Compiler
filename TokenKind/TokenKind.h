@@ -34,6 +34,21 @@ enum class TokenKind {
     // Whitespace
     SPACE, TAB, NEWLINE,
 
+    // API Functions
+    PRINTI,   // printi
+    PRINTC,   // printc
+    PRINTS,   // prints
+    PRINTLN,  // println
+    READI,    // readi
+    READS,    // reads
+    NEW,      // new
+    SIZE,     // size
+    ADD,      // add
+    GET,      // get
+    SET,      // set
+    MAIN,     // main
+
+
     // Special
     END_OF_FILE, UNKNOWN
 };
