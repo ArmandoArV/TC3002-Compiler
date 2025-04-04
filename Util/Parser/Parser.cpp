@@ -244,3 +244,4 @@ void Parser::primary() {
 
     error(peek(), "Expected expression");
 }
+

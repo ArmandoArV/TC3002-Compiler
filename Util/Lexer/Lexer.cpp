@@ -167,7 +167,7 @@ Token Lexer::readChar() {
             case '"': ch = "\""; break;
             case '\'': ch = "'"; break;
             case 'u': // Unicode escape
-                // Handle unicode escape sequence
+
                 break;
             default:
                 ch = "\\";
