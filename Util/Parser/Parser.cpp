@@ -18,6 +18,7 @@ void Parser::parse() {
 
 /* Helper Methods */
 bool Parser::match(initializer_list<TokenKind> kinds) {
+    skipComments();  // Skip comments before matching
     for (auto kind : kinds) {
         if (check(kind)) {
             advance();
@@ -50,9 +51,10 @@ bool Parser::isAtEnd() const {
 }
 
 Token Parser::consume(TokenKind kind, const string& message) {
+    skipComments();  // Skip comments before consuming
     if (check(kind)) return advance();
     error(peek(), message);
-    throw runtime_error(message); // This line is redundant but keeps compiler happy
+    throw runtime_error(message);
 }
 
 void Parser::error(const Token& token, const string& message) {
@@ -64,11 +66,13 @@ void Parser::error(const Token& token, const string& message) {
 /* Grammar Rules */
 void Parser::program() {
     while (!isAtEnd()) {
+        skipComments();
         declaration();
     }
 }
 
 void Parser::declaration() {
+    skipComments();  // Skip comments before declaration
     if (match({TokenKind::VAR})) {
         varDeclaration();
     } else {
@@ -84,7 +88,31 @@ void Parser::varDeclaration() {
     consume(TokenKind::SEMICOLON, "Expected ';' after variable declaration");
 }
 
+void Parser::synchronize() {
+    advance();  // Skip the problematic token
+
+    while (!isAtEnd()) {
+        skipComments();  // Skip comments during synchronization
+        if (previous().kind == TokenKind::SEMICOLON) return;
+
+        switch (peek().kind) {
+            case TokenKind::VAR:
+            case TokenKind::IF:
+            case TokenKind::LOOP:
+            case TokenKind::RETURN:
+            case TokenKind::PRINTI:
+            case TokenKind::PRINTC:
+            case TokenKind::PRINTS:
+            case TokenKind::PRINTLN:
+                return;
+            default:
+                advance();
+        }
+    }
+}
+
 void Parser::statement() {
+    skipComments();
     if (match({TokenKind::PRINTI, TokenKind::PRINTC, TokenKind::PRINTS, TokenKind::PRINTLN})) {
         printStatement();
     } else if (match({TokenKind::LBRACE})) {
@@ -97,6 +125,15 @@ void Parser::statement() {
         returnStatement();
     } else {
         expressionStatement();
+    }
+     try {
+        if (match({TokenKind::PRINTI, TokenKind::PRINTC, TokenKind::PRINTS, TokenKind::PRINTLN})) {
+            printStatement();
+        }
+        // ... rest of statement parsing ...
+    } catch (const runtime_error& e) {
+        synchronize();
+        throw;
     }
 }
 
@@ -157,6 +194,7 @@ void Parser::expressionStatement() {
 
 void Parser::expression() {
     assignment();
+    skipComments();
 }
 
 void Parser::assignment() {

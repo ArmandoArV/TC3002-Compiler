@@ -29,6 +29,7 @@ private:
     void declaration();
     void varDeclaration();
     void statement();
+    void synchronize();
     
     // Statements
     void printStatement();
@@ -49,6 +50,11 @@ private:
     void factor();
     void unary();
     void primary();
+    void skipComments() {
+        while (check(TokenKind::LINE_COMMENT) || check(TokenKind::BLOCK_COMMENT)) {
+            advance();
+        }
+    }
 
 public:
     Parser(const std::vector<Token>& tokens);
